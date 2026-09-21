@@ -28,8 +28,8 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 
 | # | Aşama | Konu |
 |---|-------|------|
-| 1 | Görüntü temelleri | piksel, shape, dilimleme ✅ · renkli görüntü/BGR · dosyadan okuma · kutu ve yazı çizme |
-| 2 | YOLO etiket formatı | `sınıf x y g y` satırını piksel koordinatına çevirme, etiketleri resmin üstüne çizme |
+| 1 | Görüntü temelleri ✅ | piksel, shape, dilimleme, renkli görüntü/BGR, dosyadan okuma, kutu çizme |
+| 2 | YOLO etiket formatı ✅ | `sınıf x y g y` satırını piksel koordinatına çevirme, etiketleri resmin üstüne çizme |
 | 3 | Veri setini tanıma | sınıf dağılımı, kutu boyutları, RGB ve termal farkı, train/val/test |
 | 4 | Nesne tespiti kavramları | sınırlayıcı kutu, IoU, güven skoru, NMS, precision/recall, mAP |
 | 5 | Hazır YOLO modeli | `ultralytics` ile tahmin, sonuçları okuma ve çizme |
@@ -47,4 +47,4 @@ outputs/                       # üretilen görüntüler (git'e girmez)
 GUNLUK.md                      # öğrenme günlüğü
 ```
 
-Not: `00_calisma.ipynb`'deki bazı hücreler `outputs/ders01_sahne.png` dosyasını okur. Bu dosya `01_goruntu_numpy_dizisi.ipynb` çalıştırılınca üretilir.
+Not: `00_calisma.ipynb`'deki bazı hücreler `outputs/ders01_sahne.png` ve `outputs/ders01_sahne.txt` (örnek YOLO etiketi) dosyalarını okur. `outputs/` git'e girmediği için bu dosyalar repoda yok. Görüntü `01_goruntu_numpy_dizisi.ipynb` çalıştırılınca üretilir.

@@ -38,4 +38,24 @@ Her çalışma gününde ne öğrendiğimi, nerede zorlandığımı ve sırada n
 - İki Kaggle veri setini karşılaştırdık. Hedef YOLO olduğu için 7 sınıflı, YOLO etiketli *Aerial UAV Thermal – Inferred Unified Dataset* seçildi.
 - Veri seti 13 GB olduğu için tamamını indirmeyeceğim. Yerelde küçük bir alt kümeyle öğreneceğim, eğitimi Kaggle GPU'sunda yapacağım.
 
-**Sıradaki:** Aşama 2, YOLO etiket formatı (`sınıf x_merkez y_merkez genişlik yükseklik` satırını piksel koordinatına çevirip kutuyu çizmek)
+### Aynı gün devam — Aşama 2: YOLO etiket formatı ✅
+
+**Öğrendiklerim**
+- YOLO etiket satırı: `sınıf merkez_x merkez_y genişlik yükseklik`. Değerler piksel değil, **0–1 arası oran**.
+- Orandan piksele: yatay değerler resmin genişliğiyle, dikey değerler yüksekliğiyle çarpılır. Oran kullanılmasının sebebi resim boyutu değişse de etiketin geçerli kalması.
+- Merkezden köşeye: `x1 = mx − g/2`, `x2 = mx + g/2` (y için de aynısı yükseklikle). `cv2.rectangle` köşe istediği için bu dönüşüm gerekiyor.
+- `round()` ile tam sayıya yuvarlama. Ondalıklı sayılarda küçük bilgisayar hataları olur (`0.695 × 600 = 416.99999999999994`), bu da ±1 piksel farka yol açabilir. Normal bir durum.
+- Metin ile sayı farkı: `"0.695" * 3` sonucu `"0.6950.6950.695"`, hata vermeden yanlış sonuç üretiyor. Çözüm `float()`.
+- `.split()` ile satırı parçalara, `.splitlines()` ile metni satırlara ayırmak. Listelerde de indeks 0'dan başlar.
+- İlk fonksiyonum: `yolo_kutu(satir, genislik, yukseklik)`. Etiket satırını `(x1, y1, x2, y2)` köşelerine çeviriyor (`def`, parametre, `return`).
+- `for` döngüsü ile her etiketi sırayla çizmek
+- `with open(...)` ile etiket dosyasını okumak. `\n` yeni satır karakteri, `type()` ve `repr()` ile inceleme.
+- **Sonuç:** Resmi ve aynı isimli `.txt` etiket dosyasını okuyup bütün nesnelerin kutusunu çizen kodu yazdım.
+
+**Zorlandığım yerler**
+- Kodu sıfırdan yazmak. Kalıp verilince ve boşluk doldurunca daha rahat ilerledim.
+- Döngünün içinde değişken yerine sabit metin kullandım, 4 tur da aynı kutuyu çizdi. Ders: döngü değişkeni kullanılmazsa "kod çalışıyor ama sonuç hep aynı" olur.
+- Girinti: hangi satırın döngünün ya da `with` bloğunun içinde olduğunu belirlemek dikkat istiyor. Standart 4 boşluk.
+- Etiket satırının nereden geldiğini sordum: örnekteki satırlar sahneden tersine hesaplandı, gerçek veri setinde insanlar ya da bir model tarafından üretilmiş hazır `.txt` dosyaları var.
+
+**Sıradaki:** Aşama 3. Kaggle'da veri setinden küçük bir alt küme hazırlamak, gerçek bir fotoğraf ve etiket dosyasını açıp `yolo_kutu` ile çizmek, sınıf numaralarının anlamını veri setinin ayar dosyasından öğrenmek.
