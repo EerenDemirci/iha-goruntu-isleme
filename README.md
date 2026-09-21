@@ -2,6 +2,8 @@
 
 Staj kapsamında OpenCV ile görüntü işlemeyi sıfırdan öğrenip **YOLO ile İHA görüntülerinde nesne tespiti** yapmaya ilerlediğim çalışma.
 
+**Başlangıç:** 15 Eylül 2026 · **Repo açılışı:** 21 Eylül 2026
+
 **Takip için:**
 - 🗺️ **Yol haritası** → aşağıda
 - 📓 **Öğrenme günlüğü** (her gün ne öğrendim, nerede zorlandım) → [`GUNLUK.md`](GUNLUK.md)

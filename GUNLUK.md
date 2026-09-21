@@ -4,6 +4,14 @@ Her çalışma gününde ne öğrendiğimi, nerede zorlandığımı ve sırada n
 
 ---
 
+## 15–20 Eylül 2026 — Başlangıç: OpenCV ve NumPy'a giriş
+
+- Staj kapsamında görüntü işleme çalışmasına başladım.
+- OpenCV'ye giriş ve NumPy temellerini kendi başıma çalıştım (bu repo açılmadan önce).
+- Bu konuları pekiştirmem gerektiğini fark ettim. 21 Eylül'de repoyu açıp temelleri adım adım tekrar ederek ilerlemeye başladım.
+
+---
+
 ## 21 Eylül 2026 — Aşama 1: Görüntü temelleri ✅
 
 **Kurulum**
