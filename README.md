@@ -7,7 +7,7 @@ Staj kapsamında OpenCV ile görüntü işlemeyi sıfırdan öğrenip **YOLO ile
 **Takip için:**
 - 🗺️ **Yol haritası** → aşağıda
 - 📓 **Öğrenme günlüğü** (her gün ne öğrendim, nerede zorlandım) → [`GUNLUK.md`](GUNLUK.md)
-- 🧪 **Kendi yazdığım kodlar** → [`notebooks/00_calisma.ipynb`](notebooks/00_calisma.ipynb)
+- 🧪 **Kendi yazdığım kodlar** → [`notebooks/`](notebooks/) (00: temeller, 01: gerçek veri)
 - 📦 **Veri seti** → [`data/README.md`](data/README.md)
 
 ## Kurulum
@@ -30,7 +30,7 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 |---|-------|------|
 | 1 | Görüntü temelleri ✅ | piksel, shape, dilimleme, renkli görüntü/BGR, dosyadan okuma, kutu çizme |
 | 2 | YOLO etiket formatı ✅ | `sınıf x y g y` satırını piksel koordinatına çevirme, etiketleri resmin üstüne çizme |
-| 3 | Veri setini tanıma | sınıf dağılımı, kutu boyutları, RGB ve termal farkı, train/val/test |
+| 3 | Veri setini tanıma ⏳ | sınıf dağılımı, kutu boyutları, RGB ve termal farkı, train/val/test |
 | 4 | Nesne tespiti kavramları | sınırlayıcı kutu, IoU, güven skoru, NMS, precision/recall, mAP |
 | 5 | Hazır YOLO modeli | `ultralytics` ile tahmin, sonuçları okuma ve çizme |
 | 6 | Eğitim (Kaggle GPU) | `data.yaml`, epoch, loss eğrileri, overfitting |
@@ -40,11 +40,12 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 
 ```
 notebooks/
-  00_calisma.ipynb             # adım adım kendi yazdığım denemeler
-  01_goruntu_numpy_dizisi.ipynb  # hazır ders notu: görüntü = NumPy dizisi
+  00_calisma.ipynb             # Aşama 1-2: temeller ve YOLO etiketleri (sahte sahne)
+  01_gercek_veri.ipynb         # Aşama 3: gerçek İHA fotoğrafları ve etiketleri
+  ek_goruntu_numpy_dizisi.ipynb  # ek kaynak: hazır ders notu (görüntü = NumPy dizisi)
 data/                          # veri seti (git'e girmez, bkz. data/README.md)
 outputs/                       # üretilen görüntüler (git'e girmez)
 GUNLUK.md                      # öğrenme günlüğü
 ```
 
-Not: `00_calisma.ipynb`'deki bazı hücreler `outputs/ders01_sahne.png` ve `outputs/ders01_sahne.txt` (örnek YOLO etiketi) dosyalarını okur. `outputs/` git'e girmediği için bu dosyalar repoda yok. Görüntü `01_goruntu_numpy_dizisi.ipynb` çalıştırılınca üretilir.
+Not: `00_calisma.ipynb`'deki bazı hücreler `outputs/ders01_sahne.png` ve `outputs/ders01_sahne.txt` (örnek YOLO etiketi) dosyalarını okur. `outputs/` git'e girmediği için bu dosyalar repoda yok. Görüntü `ek_goruntu_numpy_dizisi.ipynb` çalıştırılınca üretilir.
