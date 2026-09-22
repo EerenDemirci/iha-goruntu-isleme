@@ -42,6 +42,7 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 notebooks/
   00_calisma.ipynb             # Aşama 1-2: temeller ve YOLO etiketleri (sahte sahne)
   01_gercek_veri.ipynb         # Aşama 3: gerçek İHA fotoğrafları ve etiketleri
+  02_etiket_gorsellestirme.ipynb # Aşama 3: temiz hali — etiketleri kutu + sınıf adıyla çizen fonksiyon
   ek_goruntu_numpy_dizisi.ipynb  # ek kaynak: hazır ders notu (görüntü = NumPy dizisi)
 data/                          # veri seti (git'e girmez, bkz. data/README.md)
 outputs/                       # üretilen görüntüler (git'e girmez)

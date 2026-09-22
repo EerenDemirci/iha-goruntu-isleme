@@ -83,3 +83,36 @@ Her çalışma gününde ne öğrendiğimi, nerede zorlandığımı ve sırada n
 - Çok adım bir arada verilince takip etmek zorlaştı. Tek adım tek adım ilerlemek daha iyi.
 
 **Sıradaki:** Kutulara sınıf adını yazmak (`cv2.putText`), farklı kaynaklardan (İHA, silah, mayın) fotoğraflara bakmak, sınıf başına kutu boyutlarını incelemek.
+
+---
+
+## 22 Eylül 2026 — Aşama 3 devam: kaynakları inceleme ve ilk veri analizi
+
+**Tekrar**
+- Güne dünkü konuların tekrarıyla başladım: `[y, x]` ile `(x, y)` farkı, BGR, `int`/`float`, `split` ve liste indeksleri, fonksiyon, döngü, dosya okuma, sözlük. Unuttuğum yerleri tekrarla oturttum.
+
+**Yaptıklarım** (`notebooks/02_etiket_gorsellestirme.ipynb`)
+- Kutuların üstüne sınıf adı yazmak için `cv2.putText` kullandım. Yazıyı kutunun üstüne koymak için `y1 - 3` gerekiyor, çünkü resimde y yukarıdan aşağı büyüyor.
+- Fotoğrafı okuyup etiketlerini çizen işi tek bir fonksiyonda topladım: `etiketleri_ciz(ad, bolum)`. Artık her fotoğraf tek satırla görselleştirilebiliyor.
+- Karışan eski notebook yerine temiz bir sayfa açtım. Ders: bir hücreyi düzeltince tekrar çalıştırmak gerekiyor, notebook en son çalıştırılan hali hatırlıyor.
+- 6 kaynağın her birinden bir fotoğrafa baktım.
+- `os.listdir`, biriktirme (`toplam = toplam + ...`), `append` ve iç içe döngü ile 260 train etiket dosyasındaki 1.062 nesneyi okudum. Her sınıfın tipik kutu boyutunu (ortanca kenar, piksel) hesaplayıp grafiğe döktüm.
+
+**Bulgular**
+
+| # | Bulgu | Model için anlamı |
+|---|---|---|
+| 1 | Sınıf dengesizliği: nesnelerin %68'i person, other_vehicle sadece 148 | Az örnekli sınıflarda zayıf kalabilir |
+| 2 | Her kaynak belirli sınıflarda uzmanlaşmış (mayın → munitions, İHA → uav2uav, bisiklet → hituav) | Model arka plana bakıp "kestirme" öğrenebilir |
+| 3 | Bütün görüntüler termal, renk bilgisi yok | Renkli fotoğraflarla eğitilmiş hazır modeller zayıf kalabilir. Kendi eğitimimiz gerekecek. |
+| 4 | Tipik kutu kenarı: bicycle 25 px, mine 35 px, drone 44 px, gun 53 px, car 56 px, other_vehicle 59 px, person 92 px | En küçük nesneler bicycle ve mine |
+| 5 | LLVIP'te otomatik çizilmiş bir araba kutusu iki arabanın arasında kalmış gibi | Otomatik etiketler hatalı olabilir ("çöp girerse çöp çıkar") |
+
+- **Önemli ders:** Tek bir uav2uav fotoğrafına bakıp "en küçük nesneler İHA'lar" diye tahmin etmiştim. Sayılar en küçüğün bicycle olduğunu gösterdi. Tek örnekten genelleme yapmamak, gözlemi sayıyla doğrulamak gerekiyor.
+- **Tahminim:** Eğitilen model en çok bicycle, mine ve other_vehicle sınıflarında zorlanacak. Aşama 7'de kontrol edeceğim.
+
+**Zorlandığım yerler**
+- İç içe döngü. Okul yoklaması benzetmesiyle (dış döngü = her sınıf, iç döngü = sınıftaki her öğrenci) daha iyi anladım.
+- Çok adım bir arada verilince yoruldum. Küçük adımlarla ve beklenen çıktıyı önceden görerek ilerlemek daha iyi oldu.
+
+**Sıradaki:** Aşama 3'ü kapatmak (val/test bölümlerine de bakmak, istersem boyutları orana göre karşılaştırmak), sonra Aşama 4: nesne tespiti kavramları (IoU, güven skoru, precision/recall).
