@@ -30,9 +30,9 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 |---|-------|------|
 | 1 | Görüntü temelleri ✅ | piksel, shape, dilimleme, renkli görüntü/BGR, dosyadan okuma, kutu çizme |
 | 2 | YOLO etiket formatı ✅ | `sınıf x y g y` satırını piksel koordinatına çevirme, etiketleri resmin üstüne çizme |
-| 3 | Veri setini tanıma ⏳ | sınıf dağılımı, kutu boyutları, RGB ve termal farkı, train/val/test |
-| 4 | Nesne tespiti kavramları | sınırlayıcı kutu, IoU, güven skoru, NMS, precision/recall, mAP |
-| 5 | Hazır YOLO modeli | `ultralytics` ile tahmin, sonuçları okuma ve çizme |
+| 3 | Veri setini tanıma ✅ | sınıf dağılımı, kutu boyutları, RGB ve termal farkı, train/val/test |
+| 4 | Nesne tespiti kavramları ✅ | sınırlayıcı kutu, IoU, güven skoru, NMS, precision/recall, mAP |
+| 5 | Hazır YOLO modeli ✅ | `ultralytics` ile tahmin, sonuçları okuma ve çizme |
 | 6 | Eğitim (Kaggle GPU) | `data.yaml`, epoch, loss eğrileri, overfitting |
 | 7 | Değerlendirme | hata analizi, küçük nesneler, termal görüntülerdeki performans |
 
@@ -42,7 +42,9 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 notebooks/
   00_calisma.ipynb             # Aşama 1-2: temeller ve YOLO etiketleri (sahte sahne)
   01_gercek_veri.ipynb         # Aşama 3: gerçek İHA fotoğrafları ve etiketleri
-  02_etiket_gorsellestirme.ipynb # Aşama 3: temiz hali — etiketleri kutu + sınıf adıyla çizen fonksiyon
+  02_etiket_gorsellestirme.ipynb # Aşama 3: etiketleri çizen fonksiyon + kutu boyutu analizi
+  03_iou_ve_basari.ipynb       # Aşama 4: IoU, precision/recall, mAP
+  04_hazir_model.ipynb         # Aşama 5: hazır YOLO modelini termal görüntülerde denemek
   ek_goruntu_numpy_dizisi.ipynb  # ek kaynak: hazır ders notu (görüntü = NumPy dizisi)
 data/                          # veri seti (git'e girmez, bkz. data/README.md)
 outputs/                       # üretilen görüntüler (git'e girmez)

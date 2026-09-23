@@ -116,3 +116,33 @@ Her çalışma gününde ne öğrendiğimi, nerede zorlandığımı ve sırada n
 - Çok adım bir arada verilince yoruldum. Küçük adımlarla ve beklenen çıktıyı önceden görerek ilerlemek daha iyi oldu.
 
 **Sıradaki:** Aşama 3'ü kapatmak (val/test bölümlerine de bakmak, istersem boyutları orana göre karşılaştırmak), sonra Aşama 4: nesne tespiti kavramları (IoU, güven skoru, precision/recall).
+
+---
+
+## 23 Eylül 2026 — Aşama 4 (IoU ve başarı ölçme) ve Aşama 5 (hazır model)
+
+**Tekrar ve alıştırma**
+- Güne dünkü kodun üzerinden tekrarla başladım: sözlük ile liste farkı, `replace` (ekleme değil silme), `cv2.imread` ile `open`'ın neden ayrı olduğu, `int(satir.split()[0])` satırının içeriden dışarıya okunuşu, `( )` fonksiyon çağırır / `[ ]` eleman seçer.
+- Sıfırdan yazma alıştırması (listedeki sayıların toplamı). Algoritmayı sözle eksiksiz kurdum, sözdiziminde takıldım. Tespit: mantık tamam, Python yazımı pratik istiyor.
+
+**Aşama 4: Başarı nasıl ölçülür?** (`notebooks/03_iou_ve_basari.ipynb`)
+- **IoU = kesişim / birleşim.** Elle hesapladım (5 px kayma → 0.33, 2 px kayma → 0.67), sonra `iou(a, b)` fonksiyonunu yazdım.
+- Kesişimin kenarları `max`/`min` ile bulunur: ortak alan **geç başlayanda** başlar, **erken bitende** biter. `max(0, ...)` örtüşme yoksa alanı sıfıra çeker.
+- Birleşimde ortak alan bir kez çıkarılır, yoksa iki kez sayılır.
+- Gerçek veride kullandım: LLVIP fotoğrafındaki 3 araba kutusundan ikisi **%27** örtüşüyor. Dünkü gözlemimi ölçtüm.
+- **TP / FP / FN**, **precision** (alarm verdiğinde ne kadar haklı) ve **recall** (var olanların kaçını yakaladı).
+- **Güven skoru ve eşik**: eşik düşerse recall ↑ precision ↓, yükselirse tersi. İHA savunması gibi kaçırmanın pahalı olduğu yerde eşik düşük tutulur.
+- **mAP**: bütün eşiklerin ortalaması, modelin karne notu (`mAP50`, `mAP50-95`).
+
+**Aşama 5: Hazır YOLO modeli** (`notebooks/04_hazir_model.ipynb`)
+- `ultralytics` kuruldu, hazır `yolo11n` modeli (COCO ile eğitilmiş, 80 sınıf) yüklendi.
+- **Deneme 1 — kuşbakışı termal otopark** (gerçekte 21 nesne): model 4 kutu buldu, hepsi yanlış → *cell phone*, *bottle*, güven 0.27–0.35.
+- **Deneme 2 — sokak seviyesinden termal görüntü** (gerçekte 3 araba + 5 insan): 5 kutu, *car* (0.93 / 0.91 / 0.77) ve *person* (0.42 / 0.36). Büyük ölçüde doğru.
+- **Sonuç — alan farkı (domain gap):** COCO'da arabalar hep yandan görünür. Tepeden bakınca araba sadece parlak bir dikdörtgen olduğu için model en yakın bildiği şeye, cep telefonuna benzetiyor. Ayrıca kuşbakışı fotoğraflarda nesneler çok küçük.
+- Hazır model ayrıca drone / mine / gun sınıflarını hiç tanımıyor. **Kendi modelimizi eğitmemizin gerekçesi bu.**
+
+**Düzen**
+- Notebook'lara adım başlıkları ve açıklama hücreleri eklendi, hangi hücrede ne yapıldığı yazılı.
+- Değişken adları bütün sayfalarda ortaklaştırıldı: `ad`, `bolum`, `foto`, `yukseklik`, `genislik`, `etiketler`, `satir`, `numara`, `x1..y2`, `cizim`, `model`, `sonuc`, `kutu`.
+
+**Sıradaki:** Aşama 6 — Kaggle GPU'sunda kendi modelimizi eğitmek.
