@@ -36,6 +36,57 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 | 6 | Eğitim (Kaggle GPU) ✅ | `data.yaml`, epoch, loss eğrileri, overfitting |
 | 7 | Değerlendirme ⏳ | hata analizi, küçük nesneler, termal görüntülerdeki performans |
 
+## Sonuçlar
+
+Kaggle'da ücretsiz Tesla T4 GPU ile eğitildi: `yolo11n`'den transfer öğrenme, 3.000 eğitim + 600 doğrulama fotoğrafı, 20 epoch, ~20 dakika.
+
+**mAP50 = 0.789 · mAP50-95 = 0.554 · Precision = 0.879 · Recall = 0.719**
+
+### Hazır model vs kendi modelim
+
+Kuşbakışı termal otopark (gerçekte 20 araba + 1 diğer araç):
+
+![Otopark karşılaştırması](egitim_sonuclari/karsilastirma_otopark.jpg)
+
+COCO ile eğitilmiş hazır model kuşbakışı termal görüntüde çuvallıyor: 4 kutu buluyor ve arabalara *cell phone* / *bottle* diyor. Sebep **alan farkı (domain gap)** — model eğitim verisinde arabaları hep yandan görmüş, tepeden bakınca araba yalnızca parlak bir dikdörtgen.
+
+Gökyüzünde İHA (hazır model bu sınıfı hiç tanımıyor):
+
+![İHA karşılaştırması](egitim_sonuclari/karsilastirma_iha.jpg)
+
+### Sınıf bazlı başarı
+
+| Sınıf | Doğrulamadaki nesne | mAP50 |
+|---|---|---|
+| mine | 41 | 0.991 |
+| gun | 38 | 0.978 |
+| drone | 69 | 0.938 |
+| person | 1404 | 0.930 |
+| car | 321 | 0.926 |
+| bicycle | 52 | 0.627 |
+| other_vehicle | 6 | 0.133 |
+
+`other_vehicle` ve `bicycle` için doğrulamada çok az örnek var, bu iki sınıfın sayıları istatistiksel olarak güvenilir değil.
+
+### Eğitim eğrileri
+
+![Eğitim sonuçları](egitim_sonuclari/results.png)
+
+Train ve val kayıpları birlikte düşüyor, yani **ezberleme yok**. mAP eğrileri 20. epoch'ta hâlâ yükseliyor: daha uzun eğitim daha iyi sonuç verecek.
+
+### Karışıklık matrisi
+
+![Karışıklık matrisi](egitim_sonuclari/confusion_matrix.png)
+
+Model `other_vehicle` sınıfı için hiç tahmin yapmamış; gerçekteki 6 nesnenin 4'üne *car* demiş. Sınıflar arası başka karışıklık neredeyse yok; hatalar çoğunlukla yanlış alarm ve kaçırma şeklinde.
+
+### Açık maddeler
+
+1. **`other_vehicle`**: veri setinde yalnızca 148 örnek var, öğrenilmiyor. Daha fazla örnek toplanmalı ya da `car` ile birleştirilmeli.
+2. **Daha uzun eğitim**: mAP eğrileri düzleşmeden eğitim bitti; 50+ epoch ve daha çok veri denenmeli.
+3. **Kestirme öğrenme testi**: her sınıf tek bir kaynaktan geliyor (mayınlar `munitions`, İHA'lar `uav2uav`...). Model nesneyi mi, yoksa fotoğrafın türünü mü tanıyor? Farklı ortamdan örneklerle sınanmalı.
+
+
 ## Klasör yapısı
 
 ```
