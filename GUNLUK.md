@@ -146,3 +146,50 @@ Her çalışma gününde ne öğrendiğimi, nerede zorlandığımı ve sırada n
 - Değişken adları bütün sayfalarda ortaklaştırıldı: `ad`, `bolum`, `foto`, `yukseklik`, `genislik`, `etiketler`, `satir`, `numara`, `x1..y2`, `cizim`, `model`, `sonuc`, `kutu`.
 
 **Sıradaki:** Aşama 6 — Kaggle GPU'sunda kendi modelimizi eğitmek.
+
+---
+
+## 24 Eylül 2026 — Aşama 6: Kendi modelimi eğittim 🎉
+
+**Isınma:** precision/recall tekrarı. Payları aynı (doğru tespit), fark paydada: precision modelin *çizdiklerine*, recall *gerçekte var olanlara* bakar.
+
+**Kaggle kurulumu**
+- GPU'lu notebook açtım (Tesla T4). GPU ve internet için telefon doğrulaması gerekiyor.
+- `pip install ultralytics` önce çalışmadı: Kaggle notebook'larında **internet varsayılan olarak kapalı**. Settings → Internet açınca düzeldi.
+- Veri setini kısayolla (symlink) hazırladım: 3.000 train + 600 val fotoğraf. Kopyalama yok, 5 GB yerine sıfır ek alan.
+- `data.yaml` yazdım (yollar + 7 sınıf). YOLO etiketleri `images` yerine `labels` klasöründe arar.
+
+**Eğitim**
+- `yolo11n.pt` hazır modelinden başladım (**transfer öğrenme**), 20 epoch, imgsz 640, batch 32.
+- Süre: **20 dakika**. 3000 ÷ 32 = 94 adım/epoch × 20 = 1.880 düzeltme adımı.
+- Eğitim döngüsü: tahmin → gerçek etiketle karşılaştır → loss → 2,5 milyon parametreyi azıcık düzelt.
+
+**Sonuç: mAP50 = 0.789, mAP50-95 = 0.554** (ilk epoch'ta mAP50 0.37'ydi)
+
+| Sınıf | mAP50 | Tahminim tuttu mu? |
+|---|---|---|
+| mine | 0.991 | ❌ "zor olur" demiştim, en iyi çıktı |
+| gun | 0.978 | |
+| drone | 0.938 | |
+| person | 0.930 | |
+| car | 0.926 | |
+| bicycle | 0.627 | ✅ "en küçük nesneler, zor" |
+| other_vehicle | 0.133 | ✅ "148 örnekle öğrenilmez" — recall 0 |
+
+**Grafiklerden okuduklarım** (`egitim_sonuclari/`)
+- `results.png`: train ve val loss birlikte düşüyor → **ezberleme yok**. mAP eğrileri 20. epoch'ta hâlâ yükseliyor → **daha uzun eğitim daha iyi sonuç verir**.
+- `confusion_matrix.png`: `other_vehicle` için model hiç tahmin yapmamış, gerçekteki 6 nesnenin 4'üne **car** demiş. Sınıflar arası başka karışıklık yok; hatalar çoğunlukla yanlış alarm (248 person) ve kaçırma (114 person).
+- Precision eğrisi ilk epoch'ta 0.98'den 0.74'e düşüyor: model başta ürkekti, az kutu çizip hepsini tutturuyordu; sonra çok kutu çizmeye başladı, recall 0.14'ten 0.72'ye çıktı.
+
+**Hazır modelle karşılaştırma** (`notebooks/05_kendi_modelim.ipynb`)
+
+| Fotoğraf | Hazır model | Benim modelim |
+|---|---|---|
+| Kuşbakışı otopark (21 nesne) | 4 kutu: *cell phone*, *bottle* | **23 araç**, çoğu 0.90+ güven |
+| Sokak termal (8 nesne) | 3 car + 2 person | **4 car + 5 person** |
+| Gökyüzünde İHA (2 nesne) | sınıfı bilmiyor | **2 drone** |
+
+**Sıradaki adımlar**
+1. `other_vehicle` için daha fazla örnek, ya da `car` ile birleştirmek
+2. Daha uzun eğitim (50+ epoch) ve daha çok veri
+3. Kestirme öğrenme testi: her sınıf tek bir kaynaktan geldiği için model nesneyi mi, fotoğrafın türünü mü tanıyor?
