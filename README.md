@@ -40,7 +40,9 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 
 Kaggle'da ücretsiz Tesla T4 GPU ile eğitildi: `yolo11n`'den transfer öğrenme, 3.000 eğitim + 600 doğrulama fotoğrafı, 20 epoch, ~20 dakika.
 
-**mAP50 = 0.789 · mAP50-95 = 0.554 · Precision = 0.879 · Recall = 0.719**
+**v2 modeli (10.000 foto / 40 epoch): mAP50 = 0.857 · mAP50-95 = 0.642 · Precision = 0.863 · Recall = 0.816**
+
+*(İlk model v1 — 3.000 foto / 20 epoch: mAP50 0.789. Karşılaştırma: [`notebooks/08_gelistirilmis_model.ipynb`](notebooks/08_gelistirilmis_model.ipynb))*
 
 ### Hazır model vs kendi modelim
 
@@ -99,6 +101,7 @@ notebooks/
   05_kendi_modelim.ipynb       # Aşama 6-7: Kaggle GPU'da eğitim + hazır modelle karşılaştırma
   06_degerlendirme.ipynb       # Aşama 7: test ölçümü, kestirme öğrenme deneyi, klasik OpenCV karşılaştırması
   07_video.ipynb               # Video üzerinde tespit
+  08_gelistirilmis_model.ipynb # v2 modeli: 10.000 foto / 40 epoch, v1 ile karşılaştırma
 egitim_sonuclari/              # eğitim grafikleri (results, confusion matrix, örnek tahminler)
 models/                        # model dosyaları (git'e girmez)
   ek_goruntu_numpy_dizisi.ipynb  # ek kaynak: hazır ders notu (görüntü = NumPy dizisi)

@@ -268,3 +268,19 @@ En çok iyileşenler tam da zorlandığımız sınıflar. `other_vehicle` hâlâ
 **YOLO nasıl çalışıyor (öğrendiklerim):** omurga (kenar → doku → şekil), boyun (farklı ölçekleri birleştirir), baş (ızgara hücreleri için kutu + 7 sınıf puanı). Güven eşiği ve NMS ile süzülür. Son katmanlarda bir hücrenin **alıcı alanı** neredeyse tüm görüntüdür — bağlamın bu kadar etkili olmasının sebebi bu.
 
 **Sıradaki:** Yeni modeli (`deneme2/best.pt`) indirip karşılaştırmak, veri setindeki ardışık karelerden gerçek termal video üretmek, nesne takibi (tracking).
+
+**Gün sonu ek — v2 modeli indirildi ve karşılaştırıldı** (`notebooks/08_gelistirilmis_model.ipynb`)
+
+| Fotoğraf (gerçek) | v1 | v2 |
+|---|---|---|
+| Otopark (20 car + 1 other_vehicle) | 23 kutu, hepsi `car` | 22 kutu: **21 car + 1 other_vehicle** ✅ |
+| Sokak (3 car + 5 person) | 4 car + 5 person | 4 car + 5 person |
+| Gökyüzü (2 drone) | 2 drone | 2 drone |
+
+v2, v1'in kamyonete "car" dediği yerde doğru sınıfı buluyor.
+
+**Kestirme öğrenme testi tekrarlandı: düzelmemiş.** Her iki model de İHA'yı düz koyu tuvalde tanıyor (0.91 / 0.88), asfaltta hiç tanımıyor. Eklenen 7.000 fotoğrafta da bütün İHA'lar gökyüzündeydi; "gökyüzü = İHA" kuralı daha da pekişti.
+
+**Ders:** Veri miktarı her sorunu çözmüyor. Az örnekli sınıflar miktardan fayda gördü, kestirme öğrenme ise bir **çeşitlilik** sorunu olduğu için görmedi.
+
+v2 eğrileri v1'den farklı olarak sona doğru yatıklaşmış: aynı kurulumla daha uzun eğitmek büyük kazanç getirmez, bundan sonrası veri çeşitliliği ya da daha büyük modelle gelir.
