@@ -193,3 +193,78 @@ Her çalışma gününde ne öğrendiğimi, nerede zorlandığımı ve sırada n
 1. `other_vehicle` için daha fazla örnek, ya da `car` ile birleştirmek
 2. Daha uzun eğitim (50+ epoch) ve daha çok veri
 3. Kestirme öğrenme testi: her sınıf tek bir kaynaktan geldiği için model nesneyi mi, fotoğrafın türünü mü tanıyor?
+
+---
+
+## 25 Eylül 2026 — Aşama 7, ikinci eğitim ve video
+
+**Tekrar:** precision/recall alıştırması (10 kutu, 7 doğru, 14 gerçek nesne → P 0.7, R 0.5). Payları aynı, fark paydada: precision modelin *çizdiklerine*, recall *gerçekte var olanlara* bakar.
+
+### Aşama 7 — Değerlendirme (`notebooks/06_degerlendirme.ipynb`)
+
+**1) Test bölümünde ölçüm.** Val eğitim sırasında her epoch kullanıldı ve `best.pt` ona göre seçildi; `test` bölümüne hiç dokunulmadı.
+
+| | val | test |
+|---|---|---|
+| mAP50 | 0.789 | **0.800** |
+
+Test val'den kötü değil → **ezberleme yok**, model genelleşiyor. (Bu ölçüm yerel 72 fotoğrafla yapıldı.)
+
+**2) Kestirme öğrenme testi.** Aynı İHA parçasını farklı arka planlara yapıştırdım. Nesne birebir aynı, değişen tek şey arka plan:
+
+| Deney | Sonuç |
+|---|---|
+| Kendi gökyüzüne yapıştır (kontrol) | drone 0.89 ✅ |
+| Otopark asfaltına yapıştır | hiçbir şey ❌ |
+| Asfalt, güven eşiği 0.01 | `car 0.03` — İHA sezgisi yok, zayıf *araba* sezgisi var |
+| Elle üretilmiş düz koyu tuval | **drone 0.91** ✅ |
+| Asfalt, İHA 2 kat büyütülmüş | hiçbir şey ❌ (sorun boyut değil) |
+
+**Modelin öğrendiği kural:** *"Düz ve koyu bir arka planda küçük parlak bir leke varsa, bu bir İHA'dır."* Nesnenin şekli bu kuralın küçük bir parçası, arka plan baskın. Sebep veri: bütün İHA'lar `uav2uav` kaynağından, hepsi gökyüzü arka planlı.
+
+**3) Klasik yöntem karşılaştırması.** Sadece OpenCV: gri tonlama → Otsu eşikleme → morfolojik açma → kontur → boyut süzgeci.
+
+| | Klasik | YOLO |
+|---|---|---|
+| İHA fotoğrafı (2 nesne) | 2/2 | 2/2 |
+| **Otopark (21 nesne)** | **3/21** | **21/21** |
+| Sınıf ayrımı | yok, sadece "leke" | 7 sınıf |
+| Hız | 4 ms | ~7-12 ms |
+| Eğitim | gerekmez | 20 dk GPU + etiketli veri |
+
+Otoparkta varsayım ters döndü: termal görüntüde güneşte ısınan asfalt, arabalardan daha parlak. "Parlak olan nesnedir" kuralı çöktü.
+
+### İkinci eğitim (Kaggle, Tesla T4)
+
+10.000 train + 2.000 val, 40 epoch, `patience=15`, 2,6 saat.
+
+| | 1. eğitim | **2. eğitim** |
+|---|---|---|
+| Veri | 3.000 / 600 | 10.000 / 2.000 |
+| Epoch | 20 | 40 |
+| mAP50 | 0.789 | **0.857** |
+| mAP50-95 | 0.554 | **0.642** |
+| Recall | 0.719 | **0.816** |
+
+| Sınıf | 1. eğitim | 2. eğitim |
+|---|---|---|
+| mine | 0.991 | 0.995 |
+| drone | 0.938 | **0.980** |
+| gun | 0.978 | 0.977 |
+| person | 0.930 | **0.967** |
+| car | 0.926 | **0.959** |
+| bicycle | 0.627 | **0.798** |
+| other_vehicle | 0.133 | **0.323** |
+
+En çok iyileşenler tam da zorlandığımız sınıflar. `other_vehicle` hâlâ zayıf ama artık recall 0 değil. Teşhis doğruydu: sorun veri azlığıydı.
+
+### Video (`notebooks/07_video.ipynb`)
+
+- `cv2.VideoWriter` ile kendi test videomu ürettim: gökyüzünde hareket eden bir İHA, 100 kare / 20 FPS.
+- `cv2.VideoCapture` ile kare kare okuyup her kareye model uyguladım, kutulu halini ikinci videoya yazdım.
+- **Gökyüzü arka planı: 100/100 karede drone bulundu. Otopark arka planı: 0/100.** Aynı İHA, aynı hareket, tek fark arka plan.
+- Parlak zemin denemesi: nesne ile arka plan aynı parlaklıkta olduğunda klasik yöntem **kuralı basit olduğu için**, YOLO **yanlış şeyi öğrendiği için** başarısız oluyor.
+
+**YOLO nasıl çalışıyor (öğrendiklerim):** omurga (kenar → doku → şekil), boyun (farklı ölçekleri birleştirir), baş (ızgara hücreleri için kutu + 7 sınıf puanı). Güven eşiği ve NMS ile süzülür. Son katmanlarda bir hücrenin **alıcı alanı** neredeyse tüm görüntüdür — bağlamın bu kadar etkili olmasının sebebi bu.
+
+**Sıradaki:** Yeni modeli (`deneme2/best.pt`) indirip karşılaştırmak, veri setindeki ardışık karelerden gerçek termal video üretmek, nesne takibi (tracking).

@@ -34,7 +34,7 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 | 4 | Nesne tespiti kavramları ✅ | sınırlayıcı kutu, IoU, güven skoru, NMS, precision/recall, mAP |
 | 5 | Hazır YOLO modeli ✅ | `ultralytics` ile tahmin, sonuçları okuma ve çizme |
 | 6 | Eğitim (Kaggle GPU) ✅ | `data.yaml`, epoch, loss eğrileri, overfitting |
-| 7 | Değerlendirme ⏳ | hata analizi, küçük nesneler, termal görüntülerdeki performans |
+| 7 | Değerlendirme ✅ | hata analizi, küçük nesneler, termal görüntülerdeki performans |
 
 ## Sonuçlar
 
@@ -97,6 +97,8 @@ notebooks/
   03_iou_ve_basari.ipynb       # Aşama 4: IoU, precision/recall, mAP
   04_hazir_model.ipynb         # Aşama 5: hazır YOLO modelini termal görüntülerde denemek
   05_kendi_modelim.ipynb       # Aşama 6-7: Kaggle GPU'da eğitim + hazır modelle karşılaştırma
+  06_degerlendirme.ipynb       # Aşama 7: test ölçümü, kestirme öğrenme deneyi, klasik OpenCV karşılaştırması
+  07_video.ipynb               # Video üzerinde tespit
 egitim_sonuclari/              # eğitim grafikleri (results, confusion matrix, örnek tahminler)
 models/                        # model dosyaları (git'e girmez)
   ek_goruntu_numpy_dizisi.ipynb  # ek kaynak: hazır ders notu (görüntü = NumPy dizisi)
