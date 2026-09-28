@@ -97,7 +97,18 @@ Adil karşılaştırma: aynı 3.000 gerçek fotoğraf, aynı model, aynı epoch 
 | Görülmemiş İHA kesitleri (24 deneme) | 5/24 (güven 0.52) | **23/24 (güven 0.95)** |
 | Doğrulama mAP50 | 0.789 | 0.797 |
 
-**Yan etki de ölçüldü:** model artık gökyüzündeki başka nesneleri İHA sanmaya daha yatkın (araba → gökyüzü testinde v3 24 denemenin 17'sinde `drone` dedi). Kestirme tek yönlü kırıldı; tam çözüm için karşı örnek üretmek gerekiyor (gökyüzüne araba/insan yapıştırıp kendi sınıfıyla etiketlemek).
+**Yan etki ölçüldü ve o da giderildi.** v3'te model gökyüzündeki arabaları `drone` sanmaya başladı (24 denemenin 17'sinde). Kestirme tek yönlü kırılmıştı. Çözüm: **karşı örnek** — gökyüzüne araba, insan ve bisiklet yapıştırıp kendi sınıflarıyla etiketlemek (750 örnek, v4).
+
+| Test | v1 | v3 | **v4** |
+|---|---|---|---|
+| İHA gökyüzü olmayan sahnelerde (5 sahne) | 2/5 | 5/5 | **5/5** |
+| İHA video, otopark arka planı (100 kare) | 1/100 | 100/100 | **100/100** |
+| Görülmemiş İHA kesitleri (24 deneme) | 5/24 | 23/24 | **23/24** |
+| Gökyüzünde araba doğru bilinen (24) | 11/24 | 2/24 | **22/24** |
+| Gökyüzünde insan doğru bilinen (24) | 14/24 | 12/24 | **24/24** |
+| Doğrulama drone mAP50 | 0.938 | 0.919 | **0.954** |
+
+v4 hem v3'ün kazanımını korudu hem yan etkiyi giderdi; gökyüzündeki nesneleri ayırt etmede **v1'i de geçti**.
 
 Ayrıntı: [`notebooks/09_yapay_veri.ipynb`](notebooks/09_yapay_veri.ipynb) · yan etki analizi: [`notebooks/10_yan_etki.ipynb`](notebooks/10_yan_etki.ipynb)
 

@@ -330,3 +330,20 @@ Yan etki ölçümü genişletildi — bu sefer `person` sınıfı da denendi:
 | person | 14/24 | 12/24 | 11 |
 
 `car` sınıfında çöküş belirgin, `person`'da daha az — muhtemelen insan silueti termal görüntüde İHA'dan daha ayırt edici. Karşı örnek üretimi kodlandı ve görselleştirildi; v4 eğitimi sıradaki iş.
+
+**Ek — v4: karşı örneklerle yan etki giderildi**
+
+750 karşı örnek üretildi (gökyüzüne araba/insan/bisiklet, kendi sınıflarıyla etiketli) ve v3'ün verisine eklendi. Diğer her şey sabit: 3.000 gerçek + 1.500 İHA yapıştırması, yolo11n, 20 epoch.
+
+| Test | v1 | v3 | **v4** |
+|---|---|---|---|
+| İHA gökyüzü olmayan sahnelerde | 2/5 | 5/5 | **5/5** |
+| İHA video (100 kare) | 1/100 | 100/100 | **100/100** |
+| Görülmemiş İHA kesitleri | 5/24 | 23/24 | **23/24** |
+| Gökyüzünde araba | 11/24 | 2/24 | **22/24** |
+| Gökyüzünde insan | 14/24 | 12/24 | **24/24** |
+| drone mAP50 (doğrulama) | 0.938 | 0.919 | **0.954** |
+
+Karışıklık matrisinde yanlış alarmlar üç sınıfta birden azaldı (car 78→53, person 259→237, drone 28→27).
+
+**Sonuç:** Bir kestirmeyi kırmak için iki yönlü örnek gerekiyormuş: "nesne başka bağlamlarda da olur" tek başına yetmedi, "bu bağlamda başka nesneler de olur" da gerekti. 10 numaralı notebook sunuma hazır hale getirildi: v1/v3/v4 karşılaştırma görselleri, eğitim grafikleri ve satır satır yorumlar eklendi.
