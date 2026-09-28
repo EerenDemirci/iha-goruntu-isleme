@@ -317,3 +317,16 @@ v2 eğrileri v1'den farklı olarak sona doğru yatıklaşmış: aynı kurulumla 
 Sebep: ürettiğim yapay örneklerin hepsinde yapıştırılan nesne İHA'ydı. Çözüm: **karşı örnek** üretmek — gökyüzüne araba/insan yapıştırıp kendi sınıfıyla etiketlemek. Örnek görseller hazırlandı, v4 eğitimi sıradaki iş.
 
 **Öğrendiklerim:** Bir kestirmeyi kırmak için tek yönlü örnek yetmiyor. Ayrıca çözümün yan etkisini ölçmeden "sorun çözüldü" denmemeli.
+
+**Ek — yan etkinin ayrı bir sayfada incelenmesi** (`notebooks/10_yan_etki.ipynb`)
+
+Görsel karşılaştırmalar `09`'a eklendi (`egitim_sonuclari/deneyler/`): 12 sahnede v1/v3 yan yana, görülmemiş İHA kesitleriyle test.
+
+Yan etki ölçümü genişletildi — bu sefer `person` sınıfı da denendi:
+
+| Yapıştırılan → gökyüzü | v1 doğru | v3 doğru | v3'ün "drone" dediği |
+|---|---|---|---|
+| car | 11/24 | **2/24** | 17 |
+| person | 14/24 | 12/24 | 11 |
+
+`car` sınıfında çöküş belirgin, `person`'da daha az — muhtemelen insan silueti termal görüntüde İHA'dan daha ayırt edici. Karşı örnek üretimi kodlandı ve görselleştirildi; v4 eğitimi sıradaki iş.

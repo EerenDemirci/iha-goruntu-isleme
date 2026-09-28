@@ -99,7 +99,7 @@ Adil karşılaştırma: aynı 3.000 gerçek fotoğraf, aynı model, aynı epoch 
 
 **Yan etki de ölçüldü:** model artık gökyüzündeki başka nesneleri İHA sanmaya daha yatkın (araba → gökyüzü testinde v3 24 denemenin 17'sinde `drone` dedi). Kestirme tek yönlü kırıldı; tam çözüm için karşı örnek üretmek gerekiyor (gökyüzüne araba/insan yapıştırıp kendi sınıfıyla etiketlemek).
 
-Ayrıntı: [`notebooks/09_yapay_veri.ipynb`](notebooks/09_yapay_veri.ipynb)
+Ayrıntı: [`notebooks/09_yapay_veri.ipynb`](notebooks/09_yapay_veri.ipynb) · yan etki analizi: [`notebooks/10_yan_etki.ipynb`](notebooks/10_yan_etki.ipynb)
 
 ### Açık maddeler
 
@@ -122,6 +122,7 @@ notebooks/
   07_video.ipynb               # Video üzerinde tespit
   08_gelistirilmis_model.ipynb # v2 modeli: 10.000 foto / 40 epoch, v1 ile karşılaştırma
   09_yapay_veri.ipynb          # copy-paste augmentation: kestirme öğrenmeyi kırma deneyi
+  10_yan_etki.ipynb            # çözümün yan etkisi: gökyüzündeki araba/insan karışması
 egitim_sonuclari/              # eğitim grafikleri (results, confusion matrix, örnek tahminler)
 models/                        # model dosyaları (git'e girmez)
   ek_goruntu_numpy_dizisi.ipynb  # ek kaynak: hazır ders notu (görüntü = NumPy dizisi)
