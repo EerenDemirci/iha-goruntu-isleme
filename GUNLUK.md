@@ -284,3 +284,36 @@ v2, v1'in kamyonete "car" dediği yerde doğru sınıfı buluyor.
 **Ders:** Veri miktarı her sorunu çözmüyor. Az örnekli sınıflar miktardan fayda gördü, kestirme öğrenme ise bir **çeşitlilik** sorunu olduğu için görmedi.
 
 v2 eğrileri v1'den farklı olarak sona doğru yatıklaşmış: aynı kurulumla daha uzun eğitmek büyük kazanç getirmez, bundan sonrası veri çeşitliliği ya da daha büyük modelle gelir.
+
+---
+
+## 28 Eylül 2026 — Yapay veriyle kestirme öğrenmeyi kırdım
+
+**Fikir:** Teşhis deneyinin kendisi çözümü gösterdi. İHA'yı asfalta yapıştırıp modele *sormak* yerine, yapıştırıp eğitime *eklemek*.
+
+**Yöntem** (`notebooks/09_yapay_veri.ipynb`)
+1. Tek örnekle prototip: İHA'yı kes, yapıştır, etiketini **piksel → oran** dönüşümüyle yaz.
+2. **Gidiş-dönüş doğrulaması:** yazdığım etiketi geri çözüp kutuyu çizdim. İlk denemede alt kenar hesabı yanlıştı; kod hatasız çalıştı ama etiket bozuktu. Bu adım olmasa 1.500 bozuk etiketle eğitim yapacaktım.
+3. Kaggle'da 800 İHA kesiti topladım, 1.500 yapay fotoğraf ürettim (arka plan, konum, boyut ve hangi İHA — hepsi rastgele; arka planın kendi etiketleri korundu).
+4. v1 ile birebir aynı ayarlarla eğittim (3.000 aynı gerçek fotoğraf + 1.500 yapay, 20 epoch). **Tek değişken yapay veri.**
+
+**Sonuçlar**
+
+| Test | v1 | v2 | **v3** |
+|---|---|---|---|
+| 5 farklı sahnede İHA | 2/5 | 2/5 | **5/5** |
+| Video (otopark, 100 kare) | 1/100 | 0/100 | **100/100** |
+| Görülmemiş İHA kesitleri | 5/24 (0.52) | — | **23/24 (0.95)** |
+| Doğrulama mAP50 | 0.789 | 0.857* | 0.797 |
+
+\* v2 farklı veri miktarıyla eğitildi, doğrudan karşılaştırılamaz.
+
+**Neden işe yaradı:** Eğitimde "gökyüzü varsa İHA" kuralı %100 doğruydu, model en kolay yolu seçmişti. Yapay veriyle bu kural güvenilmez hale geldi; konum, boyut ve arka plan rastgele olduğu için tutunabileceği tek sabit İHA'nın kendi görünümü kaldı.
+
+**Yan etki (kendi testimle buldum):** Araba kesitlerini gökyüzüne yapıştırdım. v1 24 denemenin 11'inde `car` dedi, v3 yalnızca 2'sinde — 17 kez `drone` dedi. Yani iki ayrı kestirme varmış:
+- A: "İHA sadece gökyüzünde bulunur" → **kırıldı**
+- B: "Gökyüzünde bir şey varsa İHA'dır" → **kırılmadı**, güçlendi
+
+Sebep: ürettiğim yapay örneklerin hepsinde yapıştırılan nesne İHA'ydı. Çözüm: **karşı örnek** üretmek — gökyüzüne araba/insan yapıştırıp kendi sınıfıyla etiketlemek. Örnek görseller hazırlandı, v4 eğitimi sıradaki iş.
+
+**Öğrendiklerim:** Bir kestirmeyi kırmak için tek yönlü örnek yetmiyor. Ayrıca çözümün yan etkisini ölçmeden "sorun çözüldü" denmemeli.

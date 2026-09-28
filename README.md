@@ -82,6 +82,25 @@ Train ve val kayıpları birlikte düşüyor, yani **ezberleme yok**. mAP eğril
 
 Model `other_vehicle` sınıfı için hiç tahmin yapmamış; gerçekteki 6 nesnenin 4'üne *car* demiş. Sınıflar arası başka karışıklık neredeyse yok; hatalar çoğunlukla yanlış alarm ve kaçırma şeklinde.
 
+### Kestirme öğrenme ve yapay veriyle çözümü
+
+Model `drone` sınıfında mAP50 0.94 alıyordu, ama bir İHA'yı kesip asfalta yapıştırdığımızda **göremiyordu**. Veri setindeki bütün İHA'lar tek kaynaktan geliyor ve hepsinin arka planı gökyüzü; model "İHA şekli" yerine "düz koyu arka planda parlak leke" kuralını öğrenmişti.
+
+Veriyi üç katına çıkarmak (v2) sorunu çözmedi — sorun miktar değil **çeşitlilikti**. Çözüm olarak İHA kesitlerini farklı arka planlara rastgele konum ve boyutlarda yapıştırıp **1.500 yapay eğitim fotoğrafı** ürettim; yapıştırma koordinatları bilindiği için etiketler otomatik yazıldı (copy-paste augmentation).
+
+Adil karşılaştırma: aynı 3.000 gerçek fotoğraf, aynı model, aynı epoch — tek değişken yapay veri.
+
+| Test | v1 (yapay yok) | **v3 (yapay var)** |
+|---|---|---|
+| İHA farklı arka planlarda (5 sahne) | 2/5 | **5/5** |
+| Video, otopark arka planı (100 kare) | 1/100 | **100/100** |
+| Görülmemiş İHA kesitleri (24 deneme) | 5/24 (güven 0.52) | **23/24 (güven 0.95)** |
+| Doğrulama mAP50 | 0.789 | 0.797 |
+
+**Yan etki de ölçüldü:** model artık gökyüzündeki başka nesneleri İHA sanmaya daha yatkın (araba → gökyüzü testinde v3 24 denemenin 17'sinde `drone` dedi). Kestirme tek yönlü kırıldı; tam çözüm için karşı örnek üretmek gerekiyor (gökyüzüne araba/insan yapıştırıp kendi sınıfıyla etiketlemek).
+
+Ayrıntı: [`notebooks/09_yapay_veri.ipynb`](notebooks/09_yapay_veri.ipynb)
+
 ### Açık maddeler
 
 1. **`other_vehicle`**: veri setinde yalnızca 148 örnek var, öğrenilmiyor. Daha fazla örnek toplanmalı ya da `car` ile birleştirilmeli.
@@ -102,6 +121,7 @@ notebooks/
   06_degerlendirme.ipynb       # Aşama 7: test ölçümü, kestirme öğrenme deneyi, klasik OpenCV karşılaştırması
   07_video.ipynb               # Video üzerinde tespit
   08_gelistirilmis_model.ipynb # v2 modeli: 10.000 foto / 40 epoch, v1 ile karşılaştırma
+  09_yapay_veri.ipynb          # copy-paste augmentation: kestirme öğrenmeyi kırma deneyi
 egitim_sonuclari/              # eğitim grafikleri (results, confusion matrix, örnek tahminler)
 models/                        # model dosyaları (git'e girmez)
   ek_goruntu_numpy_dizisi.ipynb  # ek kaynak: hazır ders notu (görüntü = NumPy dizisi)
