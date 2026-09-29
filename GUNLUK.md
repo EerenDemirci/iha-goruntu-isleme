@@ -347,3 +347,28 @@ Yan etki ölçümü genişletildi — bu sefer `person` sınıfı da denendi:
 Karışıklık matrisinde yanlış alarmlar üç sınıfta birden azaldı (car 78→53, person 259→237, drone 28→27).
 
 **Sonuç:** Bir kestirmeyi kırmak için iki yönlü örnek gerekiyormuş: "nesne başka bağlamlarda da olur" tek başına yetmedi, "bu bağlamda başka nesneler de olur" da gerekti. 10 numaralı notebook sunuma hazır hale getirildi: v1/v3/v4 karşılaştırma görselleri, eğitim grafikleri ve satır satır yorumlar eklendi.
+
+---
+
+## 29 Eylül 2026 — Rehber geri bildirimi, tam test ölçümü ve demo arayüzü
+
+**Rehberin geri bildirimi ve yaptıklarım**
+
+1. **"Kendi modelim" ifadesi yanlış** → repoda hepsi **fine-tuned YOLO11n** olarak düzeltildi. Mimari değişmedi; COCO ağırlıklarının üzerine ince ayar yapıldı, tek yapısal değişiklik çıkış katmanının 80 → 7 sınıfa inmesi. README'ye yöntem notu eklendi. `05_kendi_modelim.ipynb` → `05_fine_tuning.ipynb`.
+2. **Test kümesi çok küçüktü (72 fotoğraf)** → tam test bölümünde (2.798 fotoğraf, 8.748 nesne) ölçüm yapıldı.
+3. **Adversarial examples önerisi** → notlara eklendi.
+4. **Basit bir arayüz** → `app.py` (Gradio) yazıldı.
+
+**Tam test sonuçları (v4):** mAP50 **0.833**, mAP50-95 0.578, çıkarım hızı 3,0 ms/görüntü.
+
+Küçük testin yanılttığı yerler:
+
+| Sınıf | 72 fotoğrafla | 2.798 fotoğrafla |
+|---|---|---|
+| other_vehicle | 0.000 | **0.435** |
+| bicycle | 0.765 | 0.648 |
+| drone | 0.967 | 0.931 |
+
+`other_vehicle` küçük testte sıfır görünüyordu, sanki model bu sınıfı hiç öğrenememiş gibi. Gerçekte 0.435. Az örneklemle yapılan ölçüm hem iyimser hem kötümser yanılabiliyor — rehberin uyarısı isabetliydi.
+
+**Demo arayüzü:** Görüntü yükleme (sürükle-bırak + 4 hazır örnek), model seçimi (fine-tuned v4 / v1 / hazır COCO), güven eşiği kaydırıcısı, kutulanmış çıktı, sınıf-güven-konum-boyut tablosu, işlem süresi. Aynı görüntüde hazır model `cell phone` derken fine-tuned model 24 aracı `car` olarak buluyor; fark arayüzde tek tıkla görülüyor.

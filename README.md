@@ -88,6 +88,33 @@ Train ve val kayıpları birlikte düşüyor, yani **ezberleme yok**. mAP eğril
 
 Model `other_vehicle` sınıfı için hiç tahmin yapmamış; gerçekteki 6 nesnenin 4'üne *car* demiş. Sınıflar arası başka karışıklık neredeyse yok; hatalar çoğunlukla yanlış alarm ve kaçırma şeklinde.
 
+### Tam test kümesinde ölçüm (fine-tuned v4)
+
+Eğitimde ve model seçiminde hiç kullanılmamış **2.798 fotoğraf / 8.748 nesne** üzerinde:
+
+| Sınıf | Nesne | mAP50 | Recall |
+|---|---|---|---|
+| mine | 182 | 0.992 | 0.989 |
+| gun | 187 | 0.952 | 0.963 |
+| person | 5.930 | 0.943 | 0.933 |
+| car | 1.694 | 0.931 | 0.911 |
+| drone | 367 | 0.931 | 0.935 |
+| bicycle | 378 | 0.648 | 0.758 |
+| other_vehicle | 10 | 0.435 | 0.300 |
+| **Genel** | **8.748** | **0.833** | 0.827 |
+
+Çıkarım hızı: **3,0 ms/görüntü** (Tesla T4) → saniyede ~330 kare, gerçek zamanlı video için yeterli.
+
+**Küçük test kümesi neden yanıltır?** Aynı ölçüm daha önce yalnızca 72 fotoğrafla yapılmıştı:
+
+| Sınıf | 72 fotoğrafla | 2.798 fotoğrafla |
+|---|---|---|
+| other_vehicle | **0.000** (6 nesne) | **0.435** (10 nesne) |
+| bicycle | 0.765 (52 nesne) | 0.648 (378 nesne) |
+| drone | 0.967 (13 nesne) | 0.931 (367 nesne) |
+
+Küçük örneklem hem iyimser hem kötümser hatalar üretti: `other_vehicle` sıfır görünüyordu (model bu sınıfı hiç öğrenememiş gibi), `bicycle` ise olduğundan iyi. Az örnekli sınıflarda tek bir tespitin sonucu uçurması bu yüzden mümkün.
+
 ### Kestirme öğrenme ve yapay veriyle çözümü
 
 Model `drone` sınıfında mAP50 0.94 alıyordu, ama bir İHA'yı kesip asfalta yapıştırdığımızda **göremiyordu**. Veri setindeki bütün İHA'lar tek kaynaktan geliyor ve hepsinin arka planı gökyüzü; model "İHA şekli" yerine "düz koyu arka planda parlak leke" kuralını öğrenmişti.
