@@ -146,6 +146,20 @@ v4 hem v3'ün kazanımını korudu hem yan etkiyi giderdi; gökyüzündeki nesne
 
 Ayrıntı: [`notebooks/09_yapay_veri.ipynb`](notebooks/09_yapay_veri.ipynb) · yan etki analizi: [`notebooks/10_yan_etki.ipynb`](notebooks/10_yan_etki.ipynb)
 
+#### İlgili kavram: adversarial examples
+
+Bu çalışmada yaptığımız test — nesneyi kesip farklı bir bağlama yerleştirip modelin kararının değişip değişmediğine bakmak — **adversarial example** literatürüyle aynı soruyu sorar: *modeli yanıltan girdi nasıl üretilir ve model neye dayanarak karar veriyor?*
+
+| | Klasik adversarial example | Bu çalışmadaki test |
+|---|---|---|
+| Girdi nasıl değiştirilir? | Piksellere **insan gözünün göremeyeceği** kadar küçük, hesaplanmış gürültü eklenir (FGSM, PGD gibi yöntemler) | Nesne kesilip **başka bir arka plana** yapıştırılır; değişiklik gözle görülür |
+| Neyi ortaya çıkarır? | Modelin karar sınırlarının kırılganlığı | Modelin **sahte ilişkilere** (spurious correlation) dayanması |
+| Görüntü gerçekçi mi? | Evet, göze normal görünür | Evet, sahne gerçekçi ama yapay |
+
+İkisi de **dayanıklılık testi** (robustness testing) ailesindendir: standart metrikler yüksekken modelin gerçekte kırılgan olabileceğini gösterirler. Bizim bulgumuz literatürde *natural adversarial examples* ve *shortcut learning* başlıkları altında incelenen duruma denk düşüyor.
+
+Bir sonraki adım olarak klasik adversarial saldırılarla (küçük piksel bozulmaları) modelin dayanıklılığı ayrıca ölçülebilir; bu, `MODEL_KARTI.md` içindeki "Sonraki adımlar" listesinde yer alıyor.
+
 ### Açık maddeler
 
 1. **`other_vehicle`**: veri setinde yalnızca 148 örnek var, öğrenilmiyor. Daha fazla örnek toplanmalı ya da `car` ile birleştirilmeli.
