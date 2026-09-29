@@ -372,3 +372,26 @@ Küçük testin yanılttığı yerler:
 `other_vehicle` küçük testte sıfır görünüyordu, sanki model bu sınıfı hiç öğrenememiş gibi. Gerçekte 0.435. Az örneklemle yapılan ölçüm hem iyimser hem kötümser yanılabiliyor — rehberin uyarısı isabetliydi.
 
 **Demo arayüzü:** Görüntü yükleme (sürükle-bırak + 4 hazır örnek), model seçimi (fine-tuned v4 / v1 / hazır COCO), güven eşiği kaydırıcısı, kutulanmış çıktı, sınıf-güven-konum-boyut tablosu, işlem süresi. Aynı görüntüde hazır model `cell phone` derken fine-tuned model 24 aracı `car` olarak buluyor; fark arayüzde tek tıkla görülüyor.
+
+**Model kartı ve eğitim kodu:** `MODEL_KARTI.md` yazıldı (amaç, veri, metrikler, davranışsal testler, sınırlar, etik notlar, yeniden üretilebilirlik). Kaggle'da parça parça çalıştırdığım hücreler `kaggle/egitim_pipeline.py` olarak temizlenip repoya kondu — `SURUM = "v1" | "v3" | "v4"` değiştirilerek üç deneyin üçü de yeniden üretilebiliyor.
+
+**Adversarial examples notu:** Rehberin önerisini araştırdım. Bizim yaptığımız test (nesneyi kesip başka bağlama yapıştırmak) aynı aileden: ikisi de *dayanıklılık testi*. Fark, klasik adversarial example'ın piksellere gözle görülmeyen hesaplanmış bir gürültü eklemesi; bizimkinin ise bağlamı gözle görülür biçimde değiştirmesi. Bizim bulgumuz literatürde *natural adversarial examples* ve *shortcut learning* başlıklarına denk düşüyor. Piksel düzeyinde saldırı testi "sonraki adımlar" listesine yazıldı.
+
+**Video sekmesi — nesne takibi**
+
+Arayüze ikinci bir sekme ekledim: video yükleniyor, kareler tek tek modele veriliyor ve **takip** yapılıyor.
+
+Öğrendiğim ayrım: *tespit* her kareye bağımsız bakar, *takip* kareler arasında bağ kurar ve her nesneye bir **kimlik (ID)** verir. Fark pratikte şu: 100 karede 100 tespit "100 araba" demek değil — kimlik verirsek 1 araba olduğunu anlarız. Nesne saymak ancak takip ile mümkün.
+
+Takipçi **ByteTrack** (`model.track(..., persist=True)`). `persist=True` "önceki kareyi hatırla" demek; bu olmadan her kare sıfırdan başlar ve kimlikler tutmaz.
+
+Otopark videosunda (100 kare) sonuç: **26 benzersiz nesne — 25 `car`, 1 `drone`**, 4,9 saniye (~20 kare/sn, CPU).
+
+Karşılaştığım iki sorun ve çözümleri:
+
+| Sorun | Çözüm |
+|---|---|
+| `mp4v` ile yazılan video tarayıcıda oynamıyor | önce `avc1` (H.264) deneniyor, açılmazsa `mp4v`'ye düşülüyor |
+| Sadece 1-2 karede beliren sahte kimlikler sayımı şişiriyor | "en az kaç karede görülsün" kaydırıcısı (varsayılan 3) ile eleniyor |
+
+**ID switch:** Otoparkta 24 araç var ama takipçi 25 `car` kimliği sayıyor. Bir nesne başka bir nesnenin arkasına girip çıktığında ya da tespit bir kare atladığında takipçi onu yeni bir nesne sanıyor. Sayımın hata payı bu. Fotoğraf sekmesiyle video sekmesi ayrı model kopyası kullanıyor: takip durumu modelin içinde tutulduğu için tek kopya paylaşılsa iki sekme birbirini bozardı.

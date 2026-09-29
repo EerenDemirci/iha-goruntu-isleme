@@ -197,13 +197,35 @@ Her tespit için sınıf, güven skoru, konum ve kutu boyutu tablo halinde liste
 
 Model seçicinin amacı karşılaştırma: fine-tuning'in etkisi aynı görüntüde tek tıkla görülebiliyor.
 
+### Video sekmesi — nesne takibi
+
+Arayüzün ikinci sekmesi video alır ve **tespit yerine takip** yapar. Fark şu: tespit her kareye tek tek bakar,
+takip kareler arasında bağ kurup her nesneye bir **kimlik (ID)** verir. Böylece nesneler *sayılabilir* —
+aynı araba 100 karede görünse bile 1 nesnedir.
+
+![Arayüz — video takibi](egitim_sonuclari/demo/arayuz_video_takip.jpg)
+
+Takipçi **ByteTrack**: yeni karedeki kutuları önceki karedekilerle örtüşmelerine (IoU) göre eşleştirir.
+Örnek videoda (otoparkın üzerinden geçen İHA, 100 kare) sonuç: **26 benzersiz nesne — 25 `car`, 1 `drone`**,
+toplam 4,9 saniye (~20 kare/sn, CPU).
+
+| Özellik | Açıklama |
+|---|---|
+| **Kimlik tablosu** | Her kimlik için sınıf, en yüksek güven, kaç karede görüldüğü, ilk görüldüğü kare |
+| **"En az kaç karede görülsün"** | Yalnızca 1-2 karede beliren izler sayımdan elenir (anlık yanlış alarmlar) |
+| **Sınır** | En fazla 900 kare (~45 sn) işlenir; demo beklemesi uzamasın diye |
+
+**Bilinen sınır — ID switch:** otoparkta 24 araç var, takipçi 25 `car` kimliği sayıyor. Bir nesne başka bir
+nesnenin arkasına girip çıktığında ya da tespit bir kare atladığında takipçi onu yeni bir nesne sanabiliyor.
+Bu yüzden kimlik sayısı gerçek nesne sayısından biraz fazla çıkar; sayımın hata payı budur.
+
 ## Klasör yapısı
 
 ```
 app.py                         # demo arayüzü (Gradio)
 MODEL_KARTI.md                 # modelin künyesi: amaç, veri, metrikler, sınırlar
 kaggle/                        # Kaggle eğitim betiği ve ham notebook
-ornekler/                      # arayüz için örnek görüntüler
+ornekler/                      # arayüz için örnek görüntü ve videolar
 notebooks/
   00_calisma.ipynb             # Aşama 1-2: temeller ve YOLO etiketleri (sahte sahne)
   01_gercek_veri.ipynb         # Aşama 3: gerçek İHA fotoğrafları ve etiketleri
