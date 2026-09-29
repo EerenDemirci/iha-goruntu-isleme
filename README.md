@@ -186,6 +186,7 @@ Model seçicinin amacı karşılaştırma: fine-tuning'in etkisi aynı görünt�
 
 ```
 app.py                         # demo arayüzü (Gradio)
+kaggle/                        # Kaggle eğitim betiği ve ham notebook
 ornekler/                      # arayüz için örnek görüntüler
 notebooks/
   00_calisma.ipynb             # Aşama 1-2: temeller ve YOLO etiketleri (sahte sahne)
