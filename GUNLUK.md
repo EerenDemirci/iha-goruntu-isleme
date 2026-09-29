@@ -139,17 +139,17 @@ Her çalışma gününde ne öğrendiğimi, nerede zorlandığımı ve sırada n
 - **Deneme 1 — kuşbakışı termal otopark** (gerçekte 21 nesne): model 4 kutu buldu, hepsi yanlış → *cell phone*, *bottle*, güven 0.27–0.35.
 - **Deneme 2 — sokak seviyesinden termal görüntü** (gerçekte 3 araba + 5 insan): 5 kutu, *car* (0.93 / 0.91 / 0.77) ve *person* (0.42 / 0.36). Büyük ölçüde doğru.
 - **Sonuç — alan farkı (domain gap):** COCO'da arabalar hep yandan görünür. Tepeden bakınca araba sadece parlak bir dikdörtgen olduğu için model en yakın bildiği şeye, cep telefonuna benzetiyor. Ayrıca kuşbakışı fotoğraflarda nesneler çok küçük.
-- Hazır model ayrıca drone / mine / gun sınıflarını hiç tanımıyor. **Kendi modelimizi eğitmemizin gerekçesi bu.**
+- Hazır model ayrıca drone / mine / gun sınıflarını hiç tanımıyor. **Modeli kendi verimizle fine-tune etmemizin gerekçesi bu.**
 
 **Düzen**
 - Notebook'lara adım başlıkları ve açıklama hücreleri eklendi, hangi hücrede ne yapıldığı yazılı.
 - Değişken adları bütün sayfalarda ortaklaştırıldı: `ad`, `bolum`, `foto`, `yukseklik`, `genislik`, `etiketler`, `satir`, `numara`, `x1..y2`, `cizim`, `model`, `sonuc`, `kutu`.
 
-**Sıradaki:** Aşama 6 — Kaggle GPU'sunda kendi modelimizi eğitmek.
+**Sıradaki:** Aşama 6 — Kaggle GPU'sunda YOLO11n'i kendi verimizle fine-tune etmek.
 
 ---
 
-## 24 Eylül 2026 — Aşama 6: Kendi modelimi eğittim 🎉
+## 24 Eylül 2026 — Aşama 6: YOLO11n'i fine-tune ettim 🎉
 
 **Isınma:** precision/recall tekrarı. Payları aynı (doğru tespit), fark paydada: precision modelin *çizdiklerine*, recall *gerçekte var olanlara* bakar.
 
@@ -183,7 +183,7 @@ Her çalışma gününde ne öğrendiğimi, nerede zorlandığımı ve sırada n
 
 **Hazır modelle karşılaştırma** (`notebooks/05_kendi_modelim.ipynb`)
 
-| Fotoğraf | Hazır model | Benim modelim |
+| Fotoğraf | Hazır YOLO11n (COCO) | Fine-tuned YOLO11n |
 |---|---|---|
 | Kuşbakışı otopark (21 nesne) | 4 kutu: *cell phone*, *bottle* | **23 araç**, çoğu 0.90+ güven |
 | Sokak termal (8 nesne) | 3 car + 2 person | **4 car + 5 person** |

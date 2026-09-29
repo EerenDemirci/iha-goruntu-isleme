@@ -36,6 +36,12 @@ Tamamı 13 GB. Yerelde yalnızca küçük bir alt küme (`data/`, git'e girmez) 
 | 6 | Eğitim (Kaggle GPU) ✅ | `data.yaml`, epoch, loss eğrileri, overfitting |
 | 7 | Değerlendirme ✅ | hata analizi, küçük nesneler, termal görüntülerdeki performans |
 
+### Yöntem notu: fine-tuning
+
+Bu projede **yeni bir model mimarisi tasarlanmadı**. Kullanılan model hazır `yolo11n` mimarisidir; COCO ile eğitilmiş ağırlıkların üzerine kendi termal veri setimizle **ince ayar (fine-tuning)** yapıldı. Değişen tek yapısal öğe, çıkış katmanının 80 sınıf yerine 7 sınıfa göre yeniden boyutlandırılmasıdır (`nc=80 → nc=7`).
+
+Eğitim çıktısındaki `Transferred 451/499 items from pretrained weights` satırı bunu gösterir: modelin 499 parçasından 451'i hazır ağırlıklardan geldi.
+
 ## Sonuçlar
 
 Kaggle'da ücretsiz Tesla T4 GPU ile eğitildi: `yolo11n`'den transfer öğrenme, 3.000 eğitim + 600 doğrulama fotoğrafı, 20 epoch, ~20 dakika.
@@ -44,7 +50,7 @@ Kaggle'da ücretsiz Tesla T4 GPU ile eğitildi: `yolo11n`'den transfer öğrenme
 
 *(İlk model v1 — 3.000 foto / 20 epoch: mAP50 0.789. Karşılaştırma: [`notebooks/08_gelistirilmis_model.ipynb`](notebooks/08_gelistirilmis_model.ipynb))*
 
-### Hazır model vs kendi modelim
+### Hazır model vs fine-tuned YOLO11n
 
 Kuşbakışı termal otopark (gerçekte 20 araba + 1 diğer araç):
 
@@ -119,16 +125,48 @@ Ayrıntı: [`notebooks/09_yapay_veri.ipynb`](notebooks/09_yapay_veri.ipynb) · y
 3. **Kestirme öğrenme testi**: her sınıf tek bir kaynaktan geliyor (mayınlar `munitions`, İHA'lar `uav2uav`...). Model nesneyi mi, yoksa fotoğrafın türünü mü tanıyor? Farklı ortamdan örneklerle sınanmalı.
 
 
+## Demo arayüzü
+
+Görüntü yükleyip tespit sonuçlarını görmek için basit bir web arayüzü (Gradio):
+
+```bash
+python app.py
+```
+
+Tarayıcıda `http://127.0.0.1:7860` açılır.
+
+![Arayüz — fine-tuned model](egitim_sonuclari/demo/arayuz_finetuned.jpg)
+
+Aynı görüntü, **hazır YOLO11n** ile: arabalara `cell phone` diyor ve 24 aracın yalnızca 4'üne kutu çiziyor.
+
+![Arayüz — hazır model](egitim_sonuclari/demo/arayuz_hazir_model.jpg)
+
+Her tespit için sınıf, güven skoru, konum ve kutu boyutu tablo halinde listelenir:
+
+![Tespit tablosu](egitim_sonuclari/demo/arayuz_tablo.jpg)
+
+| Özellik | Açıklama |
+|---|---|
+| **Görüntü yükleme** | Sürükle-bırak ya da dosya seçerek; dört hazır örnek de var (`ornekler/`) |
+| **Model seçimi** | Fine-tuned v4 (son sürüm) · Fine-tuned v1 (ilk sürüm) · Hazır YOLO11n (COCO) |
+| **Güven eşiği** | 0.05–0.95 arası kaydırıcı; precision–recall dengesi canlı görülür |
+| **Özet** | Bulunan nesne sayısı, sınıf dökümü, görüntü boyutu, işlem süresi |
+| **Tablo** | Her nesne için sınıf, güven skoru, sol üst köşe ve kutu boyutu |
+
+Model seçicinin amacı karşılaştırma: fine-tuning'in etkisi aynı görüntüde tek tıkla görülebiliyor.
+
 ## Klasör yapısı
 
 ```
+app.py                         # demo arayüzü (Gradio)
+ornekler/                      # arayüz için örnek görüntüler
 notebooks/
   00_calisma.ipynb             # Aşama 1-2: temeller ve YOLO etiketleri (sahte sahne)
   01_gercek_veri.ipynb         # Aşama 3: gerçek İHA fotoğrafları ve etiketleri
   02_etiket_gorsellestirme.ipynb # Aşama 3: etiketleri çizen fonksiyon + kutu boyutu analizi
   03_iou_ve_basari.ipynb       # Aşama 4: IoU, precision/recall, mAP
   04_hazir_model.ipynb         # Aşama 5: hazır YOLO modelini termal görüntülerde denemek
-  05_kendi_modelim.ipynb       # Aşama 6-7: Kaggle GPU'da eğitim + hazır modelle karşılaştırma
+  05_fine_tuning.ipynb       # Aşama 6-7: YOLO11n fine-tuning (Kaggle GPU) + hazır modelle karşılaştırma
   06_degerlendirme.ipynb       # Aşama 7: test ölçümü, kestirme öğrenme deneyi, klasik OpenCV karşılaştırması
   07_video.ipynb               # Video üzerinde tespit
   08_gelistirilmis_model.ipynb # v2 modeli: 10.000 foto / 40 epoch, v1 ile karşılaştırma
