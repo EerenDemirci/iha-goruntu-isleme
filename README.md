@@ -9,6 +9,7 @@ Staj kapsamında OpenCV ile görüntü işlemeyi sıfırdan öğrenip **YOLO ile
 - 📓 **Öğrenme günlüğü** (her gün ne öğrendim, nerede zorlandım) → [`GUNLUK.md`](GUNLUK.md)
 - 🧪 **Kendi yazdığım kodlar** → [`notebooks/`](notebooks/) (00: temeller, 01: gerçek veri)
 - 📦 **Veri seti** → [`data/README.md`](data/README.md)
+- 🧾 **Model kartı** → [`MODEL_KARTI.md`](MODEL_KARTI.md) (kullanım amacı, metrikler, **sınırlar**, etik notlar)
 
 ## Kurulum
 
@@ -186,6 +187,7 @@ Model seçicinin amacı karşılaştırma: fine-tuning'in etkisi aynı görünt�
 
 ```
 app.py                         # demo arayüzü (Gradio)
+MODEL_KARTI.md                 # modelin künyesi: amaç, veri, metrikler, sınırlar
 kaggle/                        # Kaggle eğitim betiği ve ham notebook
 ornekler/                      # arayüz için örnek görüntüler
 notebooks/
