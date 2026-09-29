@@ -4,10 +4,25 @@ Staj kapsamında OpenCV ile görüntü işlemeyi sıfırdan öğrenip **YOLO ile
 
 **Başlangıç:** 15 Eylül 2026 · **Repo açılışı:** 21 Eylül 2026
 
+---
+
+### Kısa özet
+
+İki haftada piksel seviyesinden başlayıp çalışan bir nesne tespit sistemine ulaştım. Sonuçta ortaya çıkanlar:
+
+- **Fine-tuned YOLO11n** — termal/kızılötesi görüntülerde 7 sınıf. Tam test kümesinde (2.798 fotoğraf, 8.748 nesne) **mAP50 0.833**, 3,0 ms/görüntü.
+- **Bir kusur bulup düzelttim:** Model İHA'yı şeklinden değil **arka planından** tanıyordu (gökyüzü = İHA). Otopark videosunda 100 karede 0 tespit. Yapay veriyle (kopyala-yapıştır) kırdım → **100/100**; oluşan yan etkiyi karşı örneklerle giderdim → gökyüzündeki araba 2/24'ten **22/24**'e çıktı. Bu, projenin asıl bulgusu.
+- **Demo arayüzü:** fotoğrafta tespit + videoda **nesne takibi** (ByteTrack, kimlik bazlı sayım) → [`app.py`](app.py)
+- **Dürüst sınırlar:** 72 fotoğrafla yapılan ilk ölçüm yanıltıcıydı; zayıf sınıflar, ID switch ve modelin kullanılmaması gereken yerler [`MODEL_KARTI.md`](MODEL_KARTI.md)'de açıkça yazılı.
+
+Her şey kamuya açık CC0 veriyle yapıldı, tüm kod ve deneyler bu repoda yeniden üretilebilir.
+
+---
+
 **Takip için:**
 - 🗺️ **Yol haritası** → aşağıda
 - 📓 **Öğrenme günlüğü** (her gün ne öğrendim, nerede zorlandım) → [`GUNLUK.md`](GUNLUK.md)
-- 🧪 **Kendi yazdığım kodlar** → [`notebooks/`](notebooks/) (00: temeller, 01: gerçek veri)
+- 🧪 **Kendi yazdığım kodlar** → [`notebooks/`](notebooks/) (temellerden fine-tuning ve deneylere, 12 notebook)
 - 📦 **Veri seti** → [`data/README.md`](data/README.md)
 - 🧾 **Model kartı** → [`MODEL_KARTI.md`](MODEL_KARTI.md) (kullanım amacı, metrikler, **sınırlar**, etik notlar)
 
